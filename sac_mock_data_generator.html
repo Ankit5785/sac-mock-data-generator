@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAC Mock Data Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>SAC Mock Data Generator</h1>
+            <p>Generate sample data for SAP Analytics Cloud testing and development</p>
+        </div>
+        
+        <div class="content">
+            <div class="input-section">
+                <h2>Data Configuration</h2>
+                <form id="dataForm">
+                    <div class="form-group">
+                        <label for="region">Region</label>
+                        <select id="region" name="region" required>
+                            <option value="">Select Region</option>
+                            <option value="North America">North America</option>
+                            <option value="Europe">Europe</option>
+                            <option value="Asia Pacific">Asia Pacific</option>
+                            <option value="Latin America">Latin America</option>
+                            <option value="Middle East & Africa">Middle East & Africa</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="product">Product</label>
+                        <select id="product" name="product" required>
+                            <option value="">Select Product</option>
+                            <option value="Product A">Product A</option>
+                            <option value="Product B">Product B</option>
+                            <option value="Product C">Product C</option>
+                            <option value="Product D">Product D</option>
+                            <option value="Product E">Product E</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="timePeriod">Time Period</label>
+                        <select id="timePeriod" name="timePeriod" required>
+                            <option value="">Select Time Period</option>
+                            <option value="Q1 2024">Q1 2024</option>
+                            <option value="Q2 2024">Q2 2024</option>
+                            <option value="Q3 2024">Q3 2024</option>
+                            <option value="Q4 2024">Q4 2024</option>
+                            <option value="Annual 2024">Annual 2024</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Value Range</label>
+                        <div class="range-inputs">
+                            <div>
+                                <label for="minValue">Min Value</label>
+                                <input type="number" id="minValue" name="minValue" placeholder="0" min="0" required>
+                            </div>
+                            <div>
+                                <label for="maxValue">Max Value</label>
+                                <input type="number" id="maxValue" name="maxValue" placeholder="10000" min="1" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-primary" id="generateBtn">
+                            Generate Data
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="downloadBtn">
+                            Download CSV
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="output-section">
+                <h2>Generated Data Output</h2>
+                <div id="outputDisplay" class="output-display empty">
+                    No data generated yet. Fill in the form and click "Generate Data" to see results.
+                </div>
+                <h3>JSON Output</h3>
+                <pre id="jsonOutput" class="json-output">
+                    No data generated yet.
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
