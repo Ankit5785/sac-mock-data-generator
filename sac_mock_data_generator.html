@@ -9,8 +9,21 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>SAC Mock Data Generator</h1>
-            <p>Generate sample data for SAP Analytics Cloud testing and development</p>
+            <div class="header-content">
+                <h1>SAC Mock Data Generator</h1>
+                <p>Generate sample data for SAP Analytics Cloud testing and development</p>
+            </div>
+            <div class="header-controls">
+                <button id="darkModeToggle" class="btn-icon" title="Toggle Dark Mode">
+                    <span class="icon">🌙</span>
+                </button>
+                <button id="saveConfig" class="btn-icon" title="Save Configuration">
+                    <span class="icon">💾</span>
+                </button>
+                <button id="loadConfig" class="btn-icon" title="Load Configuration">
+                    <span class="icon">📁</span>
+                </button>
+            </div>
         </div>
         
         <div class="content">
@@ -18,7 +31,17 @@
                 <h2>Data Configuration</h2>
                 <form id="dataForm">
                     <div class="form-group">
-                        <label for="region">Region</label>
+                        <div class="upload-section">
+                            <label for="region">Region</label>
+                            <div class="upload-controls">
+                                <button type="button" class="btn-upload" id="uploadRegionBtn">
+                                    <span class="icon">📁</span> Upload Regions
+                                </button>
+                                <button type="button" class="btn-reset" id="resetRegionBtn" title="Reset to defaults">
+                                    <span class="icon">🔄</span>
+                                </button>
+                            </div>
+                        </div>
                         <select id="region" name="region" required>
                             <option value="">Select Region</option>
                             <option value="North America">North America</option>
@@ -27,10 +50,24 @@
                             <option value="Latin America">Latin America</option>
                             <option value="Middle East & Africa">Middle East & Africa</option>
                         </select>
+                        <input type="file" id="regionFileInput" accept=".csv,.txt" style="display: none;">
+                        <div class="upload-info">
+                            <small>Upload CSV/TXT file with one region per line</small>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="product">Product</label>
+                        <div class="upload-section">
+                            <label for="product">Product</label>
+                            <div class="upload-controls">
+                                <button type="button" class="btn-upload" id="uploadProductBtn">
+                                    <span class="icon">📁</span> Upload Products
+                                </button>
+                                <button type="button" class="btn-reset" id="resetProductBtn" title="Reset to defaults">
+                                    <span class="icon">🔄</span>
+                                </button>
+                            </div>
+                        </div>
                         <select id="product" name="product" required>
                             <option value="">Select Product</option>
                             <option value="Product A">Product A</option>
@@ -39,31 +76,52 @@
                             <option value="Product D">Product D</option>
                             <option value="Product E">Product E</option>
                         </select>
+                        <input type="file" id="productFileInput" accept=".csv,.txt" style="display: none;">
+                        <div class="upload-info">
+                            <small>Upload CSV/TXT file with one product per line</small>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="timePeriod">Time Period</label>
-                        <select id="timePeriod" name="timePeriod" required>
-                            <option value="">Select Time Period</option>
-                            <option value="Q1 2024">Q1 2024</option>
-                            <option value="Q2 2024">Q2 2024</option>
-                            <option value="Q3 2024">Q3 2024</option>
-                            <option value="Q4 2024">Q4 2024</option>
-                            <option value="Annual 2024">Annual 2024</option>
-                        </select>
+                        <label>Time Period Range</label>
+                        <div class="time-period-inputs">
+                            <div>
+                                <label for="startMonth">Start Month</label>
+                                <input type="month" id="startMonth" name="startMonth" value="2024-01" required>
+                            </div>
+                            <div>
+                                <label for="endMonth">End Month</label>
+                                <input type="month" id="endMonth" name="endMonth" value="2024-12" required>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Value Range</label>
-                        <div class="range-inputs">
-                            <div>
-                                <label for="minValue">Min Value</label>
-                                <input type="number" id="minValue" name="minValue" placeholder="0" min="0" required>
+                        <label>Select Measures</label>
+                        <div class="measure-selection">
+                            <div class="measure-item">
+                                <input type="checkbox" id="revenue" name="measures" value="Revenue" checked>
+                                <label for="revenue">Revenue</label>
                             </div>
-                            <div>
-                                <label for="maxValue">Max Value</label>
-                                <input type="number" id="maxValue" name="maxValue" placeholder="10000" min="1" required>
+                            <div class="measure-item">
+                                <input type="checkbox" id="cost" name="measures" value="Cost" checked>
+                                <label for="cost">Cost</label>
                             </div>
+                            <div class="measure-item">
+                                <input type="checkbox" id="ebitda" name="measures" value="EBITDA">
+                                <label for="ebitda">EBITDA</label>
+                            </div>
+                            <div class="measure-item">
+                                <input type="checkbox" id="margin" name="measures" value="Margin">
+                                <label for="margin">Margin (%)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Value Ranges by Measure</label>
+                        <div id="measureRanges" class="measure-ranges">
+                            <!-- Dynamic range inputs will be generated here -->
                         </div>
                     </div>
 
@@ -74,19 +132,90 @@
                         <button type="button" class="btn btn-secondary" id="downloadBtn">
                             Download CSV
                         </button>
+                        <button type="button" class="btn btn-secondary" id="downloadJsonBtn">
+                            Download JSON
+                        </button>
                     </div>
                 </form>
             </div>
 
             <div class="output-section">
-                <h2>Generated Data Output</h2>
-                <div id="outputDisplay" class="output-display empty">
-                    No data generated yet. Fill in the form and click "Generate Data" to see results.
+                <div class="output-header">
+                    <h2>Generated Data Output</h2>
+                    <div class="output-controls">
+                        <div class="data-stats" id="dataStats">
+                            <span class="stats-text">No data generated yet</span>
+                        </div>
+                        <div class="view-controls">
+                            <button class="btn-view active" id="tableView" title="Table View">
+                                <span class="icon">📊</span>
+                            </button>
+                            <button class="btn-view" id="jsonView" title="JSON View">
+                                <span class="icon">🔧</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <h3>JSON Output</h3>
-                <pre id="jsonOutput" class="json-output">
-                    No data generated yet.
-                </pre>
+
+                <div class="data-container">
+                    <div class="table-section" id="tableSection">
+                        <div class="table-controls">
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="Search data..." class="search-input">
+                                <span class="search-icon">🔍</span>
+                            </div>
+                            <div class="scroll-controls">
+                                <div class="scroll-nav">
+                                    <button class="btn-scroll" id="scrollLeftBtn" title="Scroll left">
+                                        <span class="icon">◀</span>
+                                    </button>
+                                    <span class="scroll-info" id="scrollInfo">Scroll to view all columns</span>
+                                    <button class="btn-scroll" id="scrollRightBtn" title="Scroll right">
+                                        <span class="icon">▶</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="table-actions">
+                                <button class="btn-action" id="expandAllBtn" title="Expand table">
+                                    <span class="icon">⛶</span>
+                                </button>
+                                <button class="btn-action" id="refreshTableBtn" title="Refresh view">
+                                    <span class="icon">🔄</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="table-wrapper" id="tableWrapper" tabindex="0" aria-label="Data table with horizontal scrolling">
+                            <div id="outputDisplay" class="output-display empty">
+                                No data generated yet. Fill in the form and click "Generate Data" to see results.
+                            </div>
+                            <div class="scroll-indicator" id="scrollIndicator">← Scroll to see more →</div>
+                        </div>
+                        <div class="table-footer" id="tableFooter" style="display: none;">
+                            <div class="pagination-info">
+                                <span id="recordCount">0 records</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="json-section" id="jsonSection" style="display: none;">
+                        <div class="json-section-header">
+                            <h3>JSON Output</h3>
+                            <div class="json-controls">
+                                <button class="btn-action" id="prettifyJsonBtn" title="Format JSON">
+                                    <span class="icon">✨</span> Format
+                                </button>
+                                <button id="copyJsonBtn" class="btn-copy" title="Copy JSON to Clipboard">
+                                    <span class="icon">📋</span> Copy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="json-wrapper">
+                            <pre id="jsonOutput" class="json-output">
+                                No data generated yet.
+                            </pre>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
